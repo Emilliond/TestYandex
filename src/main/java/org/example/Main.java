@@ -2,26 +2,22 @@ package org.example;
 
 
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import org.example.model.Pet;
+import org.example.model.PetStatus;
+import org.example.service.PetService;
 
 public class Main {
-    private static final String BASE_URL = "https://petstore.swagger.io/";
-    private static final String FIND_PET_BY_ID = "v2/pet/%d";
-
     public static void main(String[] args) {
-        System.out.println(BASE_URL + String.format(FIND_PET_BY_ID,1));
-        Pet pet = findPetByID(1);
-        System.out.println(pet.getName());
 
-    }
+        Pet pet = Pet.builder()
+                .name("Fluffy")
+                .petStatus(PetStatus.AVAILABLE)
+                .build();
 
-    public static Pet findPetByID(Integer petId) {
-        HttpResponse<Pet> response = Unirest.get(BASE_URL + String.format(FIND_PET_BY_ID,petId))
-                .asObject(Pet.class);
-
-        return response.getBody();
+        HttpResponse<Pet> response = PetService.addANewPetToTheStore(pet);
+        System.out.println(response.getStatus());
+        response = PetService.findPetByID(1L);
+        System.out.println(response.getBody().getName());
     }
 
 }
